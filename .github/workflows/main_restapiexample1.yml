@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'restAPIExample1'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C2CB01D0D211438AAC2479704AB7D111 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_03BEF22FEBD24BC895E61FC10AE8C1C8 }}
           package: .
