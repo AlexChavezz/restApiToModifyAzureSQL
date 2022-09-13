@@ -92,6 +92,72 @@ function pushNewUser(req, res) {
     connection.connect();
 }
 
+function editExistentUser(req, res) {
+    const { id, name, email, isMarried } = req.body;
+    const connection = new Connection(config);
+    connection.on("connect", (error) => {
+        if(error)
+        {
+            res.status(500).json({
+                ok: true,
+                status: "Internal Server Error",
+            });
+        }
+        const request = new Request("UPDATE users SET name=@name, email=@email, isMarried=@isMarried WHERE id=@id;", (error) => {
+            if(error)
+            {
+                res.status(400).json({
+                    ok: true, 
+                    status: "user can't be updated"         
+                });
+            }
+        });
+        request.addParameter("name", TYPES.VarChar, name);
+        request.addParameter("email", TYPES.VarChar, email);
+        request.addParameter("isMarried", TYPES.Bit, isMarried);
+        request.addParameter("id", TYPES.Int, id);
+
+        request.on("requestCompleted", () => {
+            res.status(200).json({
+                ok: true, 
+                status:"user upadted successfully",
+            });
+            connection.close();
+        })
+        connection.execSql(request);
+    });
+    connection.connect();
+}
+function deleteUser(req, res) {
+    const { id } = req.body;
+    const connection = new Connection(config);
+    connection.on("connect", (error) => {
+        if (error) {
+            res.statu(500).json({
+                ok: true,
+                status: "Internal server error",
+            });
+        }
+        const request = new Request("DELETE FROM users WHERE id=@id;", (error) => {
+            if (error) {
+                res.status(400).json({
+                    ok: true,
+                    status: "bad request",
+                });
+            }
+        });
+        request.addParameter("id", TYPES.Int, id);
+        request.on("requestCompleted", () => {
+            res.status(200).json({
+                ok: true,
+                status: "user removed successfuly",
+            });
+        })
+        connection.execSql(request);
+    });
+    connection.connect();
+}
+
 module.exports = {
     getAllTable,
     pushNewUser
